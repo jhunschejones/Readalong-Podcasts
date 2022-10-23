@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+open http://localhost:4567/ && rerun ruby ./server/app.rb

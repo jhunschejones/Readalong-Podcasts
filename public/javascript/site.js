@@ -14,15 +14,30 @@
     millisToTimestamp: (millis) => {
       // creating an .srt timestamp here Hours:Minutes:Seconds,Milliseconds
       return new Date(millis).toISOString().slice(11, 23).replace(".", ",");
+    },
+    buildSentences: (rawSrt) => {
+      const lines = rawSrt.split("\n\n");
+      lines.forEach(line => {
+        const [lineNumber, timestamp, sentenceText] = line.split("\n");
+        const [startTime, endTime] = timestamp.split(" --> ");
+        const sentence = document.createElement("p");
+        sentence.textContent = sentenceText;
+        sentence.classList.add("sentence");
+        sentence.setAttribute("id", `line-${lineNumber}`);
+        sentence.dataset.startTime = startTime;
+        sentence.dataset.endTime = endTime;
+        app.sentencesContainer.appendChild(sentence);
+      });
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     app.audioPlayer = document.querySelector("#audio-player");
+    app.sentencesContainer = document.querySelector("#sentences-container");
 
     fetch("public/audio/nihongo-switch-E001.srt")
       .then((resp) => resp.text())
-      .then((rawSrt) => console.log(rawSrt));
+      .then((rawSrt) => app.buildSentences(rawSrt));
 
     app.audioPlayer.addEventListener("timeupdate", (event) => {
       // event.target.currentTime is a floating point value in seconds

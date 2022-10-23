@@ -17,16 +17,12 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", () => {
     app.audioPlayer = document.querySelector("#audio-player");
 
-    // const rawSrt = (await fetch("public/audio/nihongo-switch-E001.srt", {
-    //   credentials: "include",
-    //   headers: {
-    //     "Content-Type": "text/plain"
-    //   }
-    // })).text();
-    console.log(document.querySelector("#srt-file").contentDocument.data)
+    fetch("public/audio/nihongo-switch-E001.srt")
+      .then((resp) => resp.text())
+      .then((rawSrt) => console.log(rawSrt));
 
     app.audioPlayer.addEventListener("timeupdate", (event) => {
       // event.target.currentTime is a floating point value in seconds

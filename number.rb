@@ -2,7 +2,7 @@ file_to_number =
   if ARGV[0]
     ARGV[0]
   else
-    puts "Drag file here to number:"
+    puts "Drag SRT file here to number:"
     print "> "
     $stdin.gets.chomp.strip.gsub("\\", "")
   end

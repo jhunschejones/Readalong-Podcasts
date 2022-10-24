@@ -1,6 +1,6 @@
 require "date"
 
-OFFSET = 0.040
+OFFSET = 0.060
 
 file_to_offset =
   if ARGV[0]
@@ -15,18 +15,17 @@ raise "Couldn't find file '#{file_to_offset}'" unless File.exists?(file_to_offse
 
 srt_lines = File.read(file_to_offset).split("\n\n")
 
-# This reads out each line of an SRT then adds 0.04 to the start time
 srt_lines.each do |srt_line|
   number, timestamp, line = srt_line.split("\n")
   starttime, endtime = timestamp.split(" --> ")
 
   new_starttime = DateTime
     .strptime(starttime, "%H:%M:%S,%L")
-    .to_time + OFFSET
+    .to_time - OFFSET
 
-  # output data like an .srt file again
+  # output data like an .srt file again, rounding MS up to 10ths place for now
   puts number
-  puts "#{new_starttime.strftime("%H:%M:%S,%L")} --> #{endtime}"
+  puts "#{new_starttime.round(2).strftime("%H:%M:%S,%L")} --> #{endtime}"
   puts line
   puts ""
 end

@@ -11,9 +11,14 @@
       date.setMilliseconds(millis);
       return date;
     },
-    millisToTimestamp: (millis) => {
-      // creating an .srt timestamp here Hours:Minutes:Seconds,Milliseconds
-      return new Date(millis).toISOString().slice(11, 23).replace(".", ",");
+    // millisToTimestamp: (millis) => {
+    //   // creating an .srt timestamp here Hours:Minutes:Seconds,Milliseconds
+    //   return new Date(millis).toISOString().slice(11, 23).replace(".", ",");
+    // },
+    timestampToSeconds: (timestamp) => {
+      // takes an .srt style timestamp and converts it to a floating point milliseconds value
+      const date = app.dateFromTimestamp(timestamp)
+      return (date.getHours() * 3600) + (date.getMinutes() * 60) + date.getSeconds() + (date.getMilliseconds() / 1000);
     },
     buildSentences: (rawSrt) => {
       const lines = rawSrt.split("\n\n");
@@ -33,8 +38,8 @@
       });
     },
     playSentence: (startTime, endTime) => {
-      const starTimeAsSecondsFloat = (app.dateFromTimestamp(startTime).getHours() * 3600) + (app.dateFromTimestamp(startTime).getMinutes() * 60) + app.dateFromTimestamp(startTime).getSeconds() + (app.dateFromTimestamp(startTime).getMilliseconds() / 1000);
-      app.audioPlayer.currentTime = starTimeAsSecondsFloat;
+      app.audioPlayer.currentTime = app.timestampToSeconds(startTime);
+      app.endTime = app.timestampToSeconds(endTime);
       app.audioPlayer.play();
     }
   }
@@ -48,14 +53,13 @@
       .then((rawSrt) => app.buildSentences(rawSrt));
 
     app.audioPlayer.addEventListener("timeupdate", (event) => {
-      // event.target.currentTime is a floating point value in seconds
-      const currentTimestamp = app.millisToTimestamp(event.target.currentTime * 1000);
-      console.log(currentTimestamp);
-
-      const startTime = app.dateFromTimestamp("00:03:28,000");
-      const endTime = app.dateFromTimestamp("00:03:30,000");
-      const currentTime = app.dateFromTimestamp(currentTimestamp);
-      console.log(currentTime >= startTime && currentTime <= endTime);
+      if (app.endTime) {
+        // event.target.currentTime is a floating point value in seconds
+        if (event.target.currentTime >= app.endTime) {
+          app.audioPlayer.pause();
+          app.endTime = undefined;
+        }
+      }
     });
   });
 })();

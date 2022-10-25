@@ -38,12 +38,9 @@
       });
     },
     playSentence: (startTime, endTime) => {
-      app.audioPlayer.currentTime = app.timestampToSeconds(startTime);
+      // it feels like we need additional offset here so the browser can keep up
+      app.audioPlayer.currentTime = app.timestampToSeconds(startTime) - 0.1;
       app.endTime = app.timestampToSeconds(endTime);
-
-      // const AudioContext = window.AudioContext || window.webkitAudioContext;
-      // const audioCtx = new AudioContext();
-
       app.audioPlayer.play();
     }
   }

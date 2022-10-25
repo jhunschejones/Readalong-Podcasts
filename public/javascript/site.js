@@ -40,6 +40,14 @@
     playSentence: (startTime, endTime) => {
       app.audioPlayer.currentTime = app.timestampToSeconds(startTime);
       app.endTime = app.timestampToSeconds(endTime);
+
+      // grab the audio context to remove delay on mobile safari
+      if (!app.audioContext) {
+        app.audioContext = new AudioContext();
+        const source = app.audioContext.createMediaElementSource(app.audioPlayer);
+        source.connect(app.audioContext.destination);
+      }
+
       app.audioPlayer.play();
     }
   }
@@ -47,9 +55,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     app.audioPlayer = document.querySelector("#audio-player");
     app.sentencesContainer = document.querySelector("#sentences-container");
-
-    // grab the audio to remove delay on mobile safari
-    const audioContext = new AudioContext();
 
     fetch("public/audio/nihongo-switch-E001.srt")
       .then((resp) => resp.text())

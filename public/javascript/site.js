@@ -48,6 +48,9 @@
     app.audioPlayer = document.querySelector("#audio-player");
     app.sentencesContainer = document.querySelector("#sentences-container");
 
+    // grab the audio to remove delay on mobile safari
+    const audioContext = new AudioContext();
+
     fetch("public/audio/nihongo-switch-E001.srt")
       .then((resp) => resp.text())
       .then((rawSrt) => app.buildSentences(rawSrt));

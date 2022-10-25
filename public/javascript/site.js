@@ -27,7 +27,15 @@
         sentence.dataset.startTime = startTime;
         sentence.dataset.endTime = endTime;
         app.sentencesContainer.appendChild(sentence);
+        sentence.addEventListener("click", () => {
+          app.playSentence(startTime, endTime);
+        });
       });
+    },
+    playSentence: (startTime, endTime) => {
+      const starTimeAsSecondsFloat = (app.dateFromTimestamp(startTime).getHours() * 3600) + (app.dateFromTimestamp(startTime).getMinutes() * 60) + app.dateFromTimestamp(startTime).getSeconds() + (app.dateFromTimestamp(startTime).getMilliseconds() / 1000);
+      app.audioPlayer.currentTime = starTimeAsSecondsFloat;
+      app.audioPlayer.play();
     }
   }
 
